@@ -39,13 +39,13 @@ In order to test the controller and observe its dynamic response, a square wave 
 
 The plant to be controlled was chosen as first order system, and implemented using a simple RC circuit ($R = 10k\Omega$ and $C = 1 \mu F$). The output signal of the controller (`output` pin) is connected directly to the RC circuit and the capacitor voltage is measured by the second input of the analog-to-digital converter (system output or feedback signal). This signal can be seen in the blue curve in the figure below.
 
-An oscilloscope Tektronix TBS1102B was used to measure the reference and feedback signals (mentioned above) and both are shown in the figure below (setpoint in yellow and feedback in blue). It is observed that the controller output follows the reference and has a dynamic response with little overshoot. In this experiment, the controller gains adjusted are $K_p = 3.0$ and $T_i = 0.00613 s$. The sampling frequency is $10 kHz$, which implies sampling time of $T_s = 0.0001 s$.
+An oscilloscope Tektronix TBS1102B was used to measure the reference and feedback signals (mentioned above) and both are shown in the figure below (setpoint in yellow and feedback in blue). It is observed that the controller output follows the reference and has a dynamic response with little overshoot. In this experiment, the controller gains adjusted are $K_p = 3.04$ and $T_i = 0.00266 s$. The sampling frequency is $10 kHz$, which implies sampling time of $T_s = 0.0001 s$.
 
-![Controller waveforms 1](control1.png)
+![Controller waveforms 1](control1.jpg)
 
 A second experiment is presented in the figure below (setpoint in yellow and feedback in blue). Now, the controller gains are adjusted to $K_p = 1.0$ and $T_i = 0.01 s$. The sampling frequency and sampling time are the same as the experiment above.
 
-![Controller waveforms 2](control2.png)
+![Controller waveforms 2](control2.jpg)
 
 ## Usage
 

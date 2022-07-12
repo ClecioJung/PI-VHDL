@@ -22,7 +22,8 @@ architecture arch of main is
   signal feedback: std_logic_vector(setpoint'range) := (others => '0');
   signal control_out: std_logic_vector(setpoint'range) := (others => '0');
 begin
-  adc: entity work.adc0832 -- freq = 10 kHz
+  -- freq = 10 kHz
+  adc: entity work.adc0832
     generic map ( clk_div => 125, sampling_div => 40 )
     port map (
       clk_in => clk50MHz,
@@ -36,15 +37,16 @@ begin
     );
   
   control: entity work.pi_control
-    generic map ( use_saturator => false, n => 8, Kp => 3.0, Ti => 0.00613, Ts => 0.0001 )
+    generic map ( use_saturator => false, n => 8, Kp => 1.0, Ti => 0.01, Ts => 0.0001 )
     port map (
       clk_in => clk_sampling,
       setpoint => setpoint,
       feedback => feedback,
       output => control_out
     );
-     
-  pwm: entity work.pwm -- freq = 10.319 kHz
+  
+  -- freq = 10.319 kHz
+  pwm: entity work.pwm
     generic map ( div => 19, bits => control_out'length )
     port map (
       clk_in => clk50MHz,

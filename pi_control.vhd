@@ -20,18 +20,27 @@ entity pi_control is
 end entity;
 
 architecture arch of pi_control is
+  function only_positive(x: integer) return natural is
+  begin
+    if x > 0 then
+      return natural(x);
+    else
+      return 0;
+    end if;
+  end function;
+     
   -- Discrete gains in real precision (obtained using Tustin method of discretizaion)
   constant K1: real := Kp * (2.0 + Ts/Ti) / 2.0;
   constant K2: real := Kp * (2.0 - Ts/Ti) / 2.0;
   -- We multiply the gains by the factor because we want to remove the last bits from
   -- the control signal, which is equivalet to a division in the gains of the controller).
   -- This way we have more precision in the gains converted to digital numbers
-  constant indice: natural := natural(ceil(log2(real(K1))));
+  constant indice: natural := only_positive(integer(ceil(log2(real(K1)))));
   constant factor: real := (2.0**(n - indice)); 
   constant nK1: natural := natural(factor * K1);
   constant nK2: natural := natural(factor * K2);
   -- The maximum value allowed in control_signal (in case we use saturator)
-  constant maximum: natural := 2**(2*n-indice)-1;
+  constant maximum: natural := 2**(2*n-1-indice)-1;
   -- Since we subtract a positive number from another positive number to compute the error,
   -- the error signal must be the same length as the setpoint plus a sign
   -- error and previous_error range: -(2**n-1) to (2**n-1)
@@ -56,10 +65,10 @@ architecture arch of pi_control is
   -- where 2*(2**n-1)**2 = 2**(2*n+1) + 2**(n+2) + 2
   signal op3: signed((2*n+1) downto 0) := (others => '0');
   -- Since the control signal is limited, the op4 cannot overflow as well (op4 has one bit more than op3)
-  -- op4 range: -2*(2**n-1)**2 to (2*(2**n-1)**2 + 2**(2*n)-1)
+  -- op4 range: -2*(2**n-1)**2 to (2*(2**n-1)**2 + 2**(2*n-1)-1)
   signal op4: signed((2*n+2) downto 0) := (others => '0');
-  -- The control signal is limited to the range: 0 to 2**(2*n)-1
-  signal control_signal: unsigned(2*n downto 0) := (others => '0');
+  -- The control signal is limited to the range: 0 to 2**(2*n-1)-1
+  signal control_signal: unsigned((2*n-1) downto 0) := (others => '0');
 begin
   assert (indice <= n) report "The PI controller gains informed are too large for the required precision." severity failure;
   -- The operation we must perform is given by the following equation:
@@ -67,12 +76,12 @@ begin
   op1 <= uK1 * error;
   op2 <= uK2 * previous_error;
   op3 <= op1 - op2;
-  op4 <= signed("00" & control_signal) + ('0' & op3);
+  op4 <= signed("000" & control_signal) + ('0' & op3);
   -- The output is the higher part of the control_signal.
   -- This is equivalent to a division by the constant factor
   -- (this is why we multiply the gains by factor).
-  output <= std_logic_vector(control_signal((2*n - indice) downto (n + 1 - indice)));
-
+  output <= std_logic_vector(control_signal((2*n-1-indice) downto (n-indice)));
+  
   process(clk_in)
   begin
     if rising_edge(clk_in) then
@@ -88,10 +97,10 @@ begin
         elsif op4 >= maximum then
           control_signal <= to_unsigned(maximum, control_signal'length);
         else
-          control_signal <= unsigned(op4(2*n downto 0));
+          control_signal <= unsigned(op4((2*n-1) downto 0));
         end if;
       else
-        control_signal <= unsigned(op4(2*n downto 0));
+        control_signal <= unsigned(op4((2*n-1) downto 0));
       end if;
     end if;
   end process;
