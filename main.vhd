@@ -37,7 +37,7 @@ begin
     );
   
   control: entity work.pi_control
-    generic map ( use_saturator => false, n => 8, Kp => 1.0, Ti => 0.01, Ts => 0.0001 )
+    generic map ( use_saturator => false, n => 8, Kp => 3.04, Ti => 0.00266, Ts => 0.0001 )
     port map (
       clk_in => clk_sampling,
       setpoint => setpoint,
@@ -45,9 +45,9 @@ begin
       output => control_out
     );
   
-  -- freq = 10.319 kHz
+  -- freq = 49.019 kHz
   pwm: entity work.pwm
-    generic map ( div => 19, bits => control_out'length )
+    generic map ( div => 4, bits => control_out'length )
     port map (
       clk_in => clk50MHz,
       ratio => control_out,

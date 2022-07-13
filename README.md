@@ -15,7 +15,7 @@ This project consists of the implementation of a Proportional-Integral controlle
     - [Pulse Width Modulation (PWM)](./pwm.vhd);
     - [Shift register](./shift_register.vhd);
     - [Proportional-Integral controller](./pi_control.vhd);
-- In this project, the CPLD receives the data amostrated from the analog-to-digital converter [ADC0832](https://www.ti.com/product/ADC0832-N). This converter has two analog inputs, one corresponds to the setpoint () and another corresponds to the system output (feedback signal). The voltage level of the CPLD is 3V3 while the ADC0832 operates at 5V. This is not a problem for the AD0832 digital inputs (`clk_adc`, `cs_adc` and `di_adc` pins), as this chip identifies high logic level above 2V. On the other hand, to connect the digital output of the converter (pin `do_adc`) to the CPLD, a voltage divider circuit was used to adjust the signal amplitudes;
+- In this project, the CPLD receives the data amostrated from the analog-to-digital converter [ADC0832](https://www.ti.com/product/ADC0832-N). This converter has two analog inputs, one corresponds to the setpoint (or reference signal) and another corresponds to the system output (feedback signal). The voltage level of the CPLD is 3V3 while the ADC0832 operates at 5V. This is not a problem for the AD0832 digital inputs (`clk_adc`, `cs_adc` and `di_adc` pins), as this chip identifies high logic level above 2V. On the other hand, to connect the digital output of the converter (pin `do_adc`) to the CPLD, a voltage divider circuit was used to adjust the signal amplitudes;
 - List of input and output pins of the CPLD:
 
 | Name        | Pin number  | Description |
@@ -43,7 +43,7 @@ An oscilloscope Tektronix TBS1102B was used to measure the reference and feedbac
 
 ![Controller waveforms 1](control1.jpg)
 
-A second experiment is presented in the figure below (setpoint in yellow and feedback in blue). Now, the controller gains are adjusted to $K_p = 1.0$ and $T_i = 0.01 s$. The sampling frequency and sampling time are the same as the experiment above.
+A second experiment (in the same plant) is presented in the figure below (setpoint in yellow and feedback in blue). Now, the controller gains are adjusted to $K_p = 1.0$ and $T_i = 0.01 s$. The sampling frequency and sampling time are the same as the experiment above.
 
 ![Controller waveforms 2](control2.jpg)
 
